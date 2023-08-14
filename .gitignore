@@ -1,0 +1,7 @@
+#Binaries
+*.exe
+
+#rando node stuff
+node_modules
+#private
+config.json
