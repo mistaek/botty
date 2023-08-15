@@ -1,3 +1,7 @@
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { loadFolder } from '../misc/utils.js';
+
 import {Client, Collection, GatewayIntentBits} from "discord.js";
 import type {Command} from './command.js'
 
@@ -10,7 +14,19 @@ export class ExtendedClient extends Client{
         this.commands = new Collection();
     }
 
+    private async loadCommands(){
+        const commandsPath = path.join(fileURLToPath(import.meta.url), '/../../commands');
+        console.log(`Loading commands from ${commandsPath}`);
+        const commandFiles: Command[] = await loadFolder(commandsPath, ['data', 'execute']);
+
+        for (const command of commandFiles) {
+            console.log(`Loaded command ${command.data.name}`);
+            this.commands.set(command.data.name, command);
+        }
+    }
+
     start(){
+        this.loadCommands();
         this.login();
     }
 }

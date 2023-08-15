@@ -1,7 +1,7 @@
-import { Interaction } from "discord.js";
+import type { RESTPostAPIApplicationCommandsJSONBody, RESTPostAPIApplicationGuildCommandsJSONBody, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 //type properly later
 export type Command ={
-    data: any;
-    execute(interaction: Interaction) : Promise<void> | void; 
+    data: SlashCommandBuilder;
+    execute(interaction: ChatInputCommandInteraction) : Promise<void> | void; 
 };

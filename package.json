@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "tsc-watch --onSuccess \"node ./dist/index.js\"",
+    "deploy" : "tsc \n node ./dist/deploy-commands.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,6 +15,8 @@
     "discord.js": "^14.12.1",
     "dotenv": "^16.3.1",
     "ts-node": "^10.9.1",
+    "tsc-watch": "^6.0.4",
     "typescript": "^5.1.6"
-  }
+  },
+  "type": "module"
 }

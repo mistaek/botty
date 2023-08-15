@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "commonjs",
-        "rootDir": "./",
+        "module": "ESNext",
+        "rootDir": "./src",
         "outDir": "./dist/",
         "strict": true,
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "importHelpers": true,
         "experimentalDecorators": true,
         "esModuleInterop": true,
@@ -24,10 +24,11 @@
         "src/index.ts"
     ],
     "include": [
-        "./**/*.ts"
+        "./src/**/*"
     ],
     "exclude": [
         "node_modules",
         "dist"
-    ],
+    ]
+    
 }

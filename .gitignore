@@ -1,5 +1,6 @@
-#Binaries
+#Binaries/compiled stuff
 *.exe
+dist
 
 #rando node stuff
 node_modules
