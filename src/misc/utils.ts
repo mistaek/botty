@@ -15,7 +15,7 @@ export async function dynamicImport(path: string): Promise<any> {
  * @param {[string, string]} props - The properties to check if the structure is valid
  */
 export async function loadFolder(path: PathLike, props: [string, string]) {
-    const fileData : Command[] = [];
+    const fileData : any[] = [];
 
     const folders = readdirSync(path);
     for(const folder of folders){
