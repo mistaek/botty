@@ -5,15 +5,19 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc-watch --onSuccess \"node ./dist/index.js\"",
-    "deploy" : "tsc \n node ./dist/deploy-commands.js ",
+    "deploy": "tsc \n node ./dist/deploy-commands.js ",
+    "clean": "rm -r dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/voice": "^0.16.0",
     "@types/node": "^20.5.0",
     "discord.js": "^14.12.1",
     "dotenv": "^16.3.1",
+    "libsodium-wrappers": "^0.7.11",
+    "play-dl": "^1.9.6",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "typescript": "^5.1.6"

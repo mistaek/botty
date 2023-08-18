@@ -3,7 +3,12 @@ import { pathToFileURL } from 'node:url';
 import { type PathLike, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import type {Command} from '../structs/command.js';
+//music functions should probably be moved
+import { InfoData, YouTubeChannel, video_basic_info } from 'play-dl';
+import {Song} from '../structs/song.js';
+import play from 'play-dl';
+
+
 export async function dynamicImport(path: string): Promise<any> {
     const module = await import(pathToFileURL(path).toString());
     return module?.default;
@@ -31,4 +36,45 @@ export async function loadFolder(path: PathLike, props: [string, string]) {
     }
 
     return fileData;
+}
+
+export const videoPattern = /^(https?:\/\/)?(www\.)?(m\.|music\.)?(youtube\.com|youtu\.?be)\/.+$/;
+
+function hmsToSecondsOnly(str:string) {
+    let p = str.split(':');
+    let s = 0, m = 1, i = p.length -1;
+
+    while (i >= 0) {
+        s += m * parseInt(p[i--], 10);
+        m *= 60;
+    }
+
+    return s;
+}
+
+export async function getSong(name: string): Promise<Song|null>{
+    const isYoutubeUrl = videoPattern.test(name);
+    let songInfo : InfoData;
+    if(isYoutubeUrl){
+        songInfo = await video_basic_info(name);
+        return {
+            url: songInfo.video_details.url,
+            title: songInfo.video_details.title!,
+            duration: songInfo.video_details.durationInSec
+        } satisfies Song;
+    }
+    else{
+        const result = await play.search(name, {limit: 1});
+        if(!result.length){
+            return null;
+        }
+        const topResult = result[0];
+        if(topResult.type !== 'video') return null;
+        return {
+            url: topResult.url,
+            title: topResult.title!,
+            duration: topResult.durationInSec
+        } satisfies Song; 
+        
+    }
 }

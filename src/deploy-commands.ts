@@ -17,7 +17,7 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN || '');
     try{
         console.log(`Started refreshing ${commands.length} slash commands`);
         const data = await rest.put(
-            Routes.applicationGuildCommands(process.env.clientId || '', process.env.guildId || ''),
+            Routes.applicationCommands(process.env.clientId || ''),
             {body: commands}
         );
     }
