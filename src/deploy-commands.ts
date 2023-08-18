@@ -20,6 +20,11 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN || '');
             Routes.applicationCommands(process.env.clientId || ''),
             {body: commands}
         );
+        //register in guild too, seems faster
+        /*const data2 = await rest.put(
+            Routes.applicationGuildCommands(process.env.clientId || '', process.env.guildId || ''),
+            {body: commands}
+        );*/
     }
     catch(error) {
         console.error(error);

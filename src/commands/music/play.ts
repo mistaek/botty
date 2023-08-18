@@ -37,13 +37,13 @@ export default {
 
         const client = interaction.client as ExtendedClient;
         let queue : Queue|undefined = client.queues.get(interaction.guild!.id);
-        if(!queue){
-            queue = new Queue(interaction.guild!.id);
+        if(!queue || !queue.connected()){
+            queue = new Queue(interaction.guild!.id, connection);
             client.queues.set(interaction.guild!.id, queue);
         }
         queue.addSong(song);
         queue.play();
-        await interaction.reply(`played ${song.title}`);
+        await interaction.reply(`added ${song.title} to queue`);
     }
 } satisfies Command;
 

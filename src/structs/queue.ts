@@ -1,4 +1,4 @@
-import {getVoiceConnection, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnectionStatus, AudioPlayer, AudioPlayerState, AudioPlayerStatus} from '@discordjs/voice';
+import {getVoiceConnection, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnectionStatus, AudioPlayer, AudioPlayerState, AudioPlayerStatus, VoiceConnection} from '@discordjs/voice';
 import play from 'play-dl'
 import type {Song} from './song.js';
 import { error } from 'console';
@@ -7,9 +7,11 @@ export class Queue{
     private guildId: string;
     private queue: Song[]; 
     private player: AudioPlayer;
+    private connection: VoiceConnection
 
-    constructor(id: string){
+    constructor(id: string, connection: VoiceConnection){
         this.guildId = id;
+        this.connection = connection;
         this.queue = [];
         this.player = createAudioPlayer({
             behaviors: {
@@ -18,7 +20,7 @@ export class Queue{
         });
         this.player.on('stateChange', async (oldState: AudioPlayerState, newState: AudioPlayerState) => {
             if(newState.status == AudioPlayerStatus.Idle){
-                console.log('audio player update, try to play a song');
+                //console.log('audio player update, try to play a song');
                 if(this.queue.length) this.play();
             }
         })
@@ -42,5 +44,25 @@ export class Queue{
         })
         this.player.play(resource);
         connection.subscribe(this.player);    
+    }
+
+    public async pause(){
+        if(this.player.state.status === AudioPlayerStatus.Playing) this.player.pause(); 
+        else if(this.player.state.status === AudioPlayerStatus.Paused) this.player.unpause();
+    }
+
+    public async skip(){
+        this.player.stop();
+        this.play();
+    }
+
+    public connected() {
+        return (this.connection.state.status === VoiceConnectionStatus.Ready);
+    }
+    
+    public async stop(){
+        this.player.stop();
+        this.queue = [];
+        this.connection.destroy();
     }
 }
