@@ -9,6 +9,6 @@ export default {
         let queue = client.queues.get(interaction.guild!.id);
         if(queue) queue.stop();
         
-        await interaction.reply('left vc');
+        await interaction.reply({content: `left vc`, ephemeral: true});
     }
 } satisfies Command;

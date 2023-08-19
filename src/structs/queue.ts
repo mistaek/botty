@@ -5,7 +5,8 @@ import { error } from 'console';
 
 export class Queue{
     private guildId: string;
-    private queue: Song[]; 
+    private currentSong: Song | undefined | null; //questionable design decision but im too lazy to rewrite some of the other stuff
+    private queue: Song[];
     private player: AudioPlayer;
     private connection: VoiceConnection
 
@@ -13,6 +14,7 @@ export class Queue{
         this.guildId = id;
         this.connection = connection;
         this.queue = [];
+        this.currentSong = null;
         this.player = createAudioPlayer({
             behaviors: {
                 noSubscriber: NoSubscriberBehavior.Play
@@ -21,6 +23,7 @@ export class Queue{
         this.player.on('stateChange', async (oldState: AudioPlayerState, newState: AudioPlayerState) => {
             if(newState.status == AudioPlayerStatus.Idle){
                 //console.log('audio player update, try to play a song');
+                if(this.currentSong) this.currentSong = null;
                 if(this.queue.length) this.play();
             }
         })
@@ -32,9 +35,9 @@ export class Queue{
 
     public async play(){
         if(this.player.state.status !== AudioPlayerStatus.Idle) return;
-        const song = this.queue.shift(); 
-        if(!song) return; 
-        const stream = await play.stream(song.url);
+        this.currentSong = this.queue.shift(); 
+        if(!this.currentSong) return; 
+        const stream = await play.stream(this.currentSong.url);
         const connection = getVoiceConnection(this.guildId);
         if(!connection){
             throw error("not connected");
@@ -62,7 +65,12 @@ export class Queue{
     
     public async stop(){
         this.player.stop();
+        this.currentSong = null;
         this.queue = [];
         this.connection.destroy();
+    }
+
+    public np(){
+        return this.currentSong;
     }
 }

@@ -2,5 +2,6 @@
 export type Song = {
     url: string;
     title: string;
-    duration: number; // do i want this as number??
+    thumbnail: string;
+    duration: string; // do i want this as number??
 }

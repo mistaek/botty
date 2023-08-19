@@ -60,7 +60,8 @@ export async function getSong(name: string): Promise<Song|null>{
         return {
             url: songInfo.video_details.url,
             title: songInfo.video_details.title!,
-            duration: songInfo.video_details.durationInSec
+            thumbnail: songInfo.video_details.thumbnails[0].url,
+            duration: songInfo.video_details.durationRaw
         } satisfies Song;
     }
     else{
@@ -73,7 +74,8 @@ export async function getSong(name: string): Promise<Song|null>{
         return {
             url: topResult.url,
             title: topResult.title!,
-            duration: topResult.durationInSec
+            thumbnail: topResult.thumbnails[0].url,
+            duration: topResult.durationRaw
         } satisfies Song; 
         
     }

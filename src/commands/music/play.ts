@@ -1,9 +1,8 @@
-import {type GuildMember, type ChatInputCommandInteraction, SlashCommandBuilder, messageLink} from "discord.js"; 
-import {createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnectionStatus} from '@discordjs/voice';
+import {type GuildMember, type ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder} from "discord.js"; 
+import {joinVoiceChannel, VoiceConnectionStatus} from '@discordjs/voice';
 import type {Command} from '../../structs/command.js';
 import { Queue } from "../../structs/queue.js";
 import {getSong} from '../../misc/utils.js'
-import play from 'play-dl';
 import { ExtendedClient } from "src/structs/client.js";
 
 export default {
@@ -18,16 +17,22 @@ export default {
             return;
         }
         
-        //need better place to manage connection, do i move it to queue??
-        const connection = joinVoiceChannel({
-            channelId: user.voice.channel.id,
-            guildId: interaction.guild!.id,
-            adapterCreator: interaction.guild!.voiceAdapterCreator
-        });
+        const client = interaction.client as ExtendedClient;
+        let queue : Queue|undefined = client.queues.get(interaction.guild!.id);
+        if(!queue || !queue.connected()){
+            const connection = joinVoiceChannel({
+                channelId: user.voice.channel.id,
+                guildId: interaction.guild!.id,
+                adapterCreator: interaction.guild!.voiceAdapterCreator
+            });
+            connection.on(VoiceConnectionStatus.Ready, () => {
+                console.log('Joined voice channel');
+            });
+            queue = new Queue(interaction.guild!.id, connection);
+            client.queues.set(interaction.guild!.id, queue);
+        }
 
-        connection.on(VoiceConnectionStatus.Ready, () => {
-            console.log('Joined voice channel');
-        });
+        //need better place to manage connection, do i move it to queue??        
 
         const song = await getSong(interaction.options.getString('input')!);
         if(!song){
@@ -35,15 +40,15 @@ export default {
             return; 
         }
 
-        const client = interaction.client as ExtendedClient;
-        let queue : Queue|undefined = client.queues.get(interaction.guild!.id);
-        if(!queue || !queue.connected()){
-            queue = new Queue(interaction.guild!.id, connection);
-            client.queues.set(interaction.guild!.id, queue);
-        }
+        
         queue.addSong(song);
         queue.play();
-        await interaction.reply(`added ${song.title} to queue`);
+        let embed = new EmbedBuilder().setAuthor({name: 'Added to queue'})
+                                            .setThumbnail(song!.thumbnail)
+                                            .setTitle(`${song!.title}`)
+                                            .setURL(song!.url)
+                                            .setDescription(`Duration: ${song!.duration}`);
+        await interaction.reply({embeds: [embed]});
     }
 } satisfies Command;
 
