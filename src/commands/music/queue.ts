@@ -20,15 +20,12 @@ export default {
         let songs = queue.getSongs();
         songs = songs.slice(0, 10);
         
-        let i = 1; 
-        const list = `1: [${cur!.title}](${cur!.url})` + "\n" + songs.map((song) => `${++i}: [${song.title}](${song.url})`).join("\n");
+        const list = `1: [${cur!.title}](${cur!.url})` + "\n" + songs.map((song,index) => `${index+2}: [${song.title}](${song.url})`).join("\n");
 
         const embed = new EmbedBuilder().setTitle("Queue")
                                         .setDescription(list);
         
-        await interaction.editReply(
-            {embeds: [embed]}
-        )
+        await interaction.editReply({embeds: [embed]});
         
     }
 }

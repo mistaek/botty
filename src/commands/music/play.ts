@@ -2,6 +2,7 @@ import {type GuildMember, type ChatInputCommandInteraction, SlashCommandBuilder,
 import {joinVoiceChannel, VoiceConnectionStatus} from '@discordjs/voice';
 import type {Command} from '../../structs/command.js';
 import { Queue } from "../../structs/queue.js";
+import { Song } from "../..//structs/song.js";
 import {getSong} from '../../misc/utils.js'
 import { ExtendedClient } from "src/structs/client.js";
 
@@ -36,7 +37,7 @@ export default {
 
         const song = await getSong(interaction.options.getString('input')!);
         if(!song){
-            await interaction.reply('No song found');
+            await interaction.reply('No result found');
             return; 
         }
 

@@ -80,3 +80,30 @@ export async function getSong(name: string): Promise<Song|null>{
         
     }
 }
+
+export async function searchSongs(name: string): Promise<Song[]|null>{
+    const isYoutubeUrl = videoPattern.test(name);
+    if(isYoutubeUrl){
+        let song = await getSong(name);
+        if(!song) return null;
+        else return [song];
+    }
+    else{
+        let results = await play.search(name, {limit: 5});
+        results = results.filter((result) => {return (result.type === 'video')});
+
+        if(!results.length){
+            return null; 
+        }
+        const songs = results.map(
+            (result) => {
+                return {
+                    url: result.url,
+                    title: result.title!,
+                    thumbnail: result.thumbnails[0].url,
+                    duration: result.durationRaw
+                } satisfies Song;
+            });
+        return songs; 
+    }
+}
