@@ -70,6 +70,10 @@ export class Queue{
         this.connection.destroy();
     }
 
+    public getSongs(){
+        return this.queue;
+    }
+
     public np(){
         return this.currentSong;
     }
