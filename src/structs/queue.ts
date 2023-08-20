@@ -43,8 +43,10 @@ export class Queue{
             throw error("not connected");
         }
         let resource = createAudioResource(stream.stream, {
-            inputType: stream.type
+            inputType: stream.type,
+            inlineVolume: true,
         })
+        resource.volume?.setVolume(0.2);
         this.player.play(resource);
         connection.subscribe(this.player);    
     }

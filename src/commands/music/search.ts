@@ -10,6 +10,10 @@ export default {
     async execute(interaction: ChatInputCommandInteraction){
         const user = interaction.member! as GuildMember; //should always be guild member, not sure how to resolve these kinda type issues 
         const client = interaction.client as ExtendedClient; 
+        if(!user.voice.channel){
+            await interaction.reply(`bud you are not in a vc`);
+            return;
+        }
         let queue = client.queues.get(interaction.guild!.id);
         await interaction.deferReply();
 
@@ -56,6 +60,6 @@ export default {
             });
             queue!.play();
             selectInteraction.reply({content: "Added selected songs", ephemeral: true});
-        })
+        }).catch(err => console.log('No interactions on search'));
     }
 }
