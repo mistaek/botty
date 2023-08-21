@@ -72,6 +72,22 @@ export class Queue{
         this.connection.destroy();
     }
 
+    public remove(index: number){
+        if(index <= 0 || index-1 > this.queue.length) return null;
+
+        let removed : Song; 
+        if(index == 1){
+            if(!this.currentSong) return null;
+            removed = this.currentSong; 
+            this.skip(); 
+            return removed; 
+        }
+        else{
+            removed = this.queue[index-2]; 
+            this.queue.splice(index-2, 1); 
+            return removed; 
+        }
+    }
     public getSongs(){
         return this.queue;
     }
